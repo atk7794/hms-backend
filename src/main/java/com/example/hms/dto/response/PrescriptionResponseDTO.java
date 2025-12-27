@@ -1,5 +1,7 @@
 package com.example.hms.dto.response;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 import java.time.LocalDateTime;
 
 public class PrescriptionResponseDTO {
@@ -13,7 +15,11 @@ public class PrescriptionResponseDTO {
     private String medication;
     private String dosage;
     private String instructions;
+
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
     private LocalDateTime createdAt;
+
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
     private LocalDateTime updatedAt;
 
     // getters & setters

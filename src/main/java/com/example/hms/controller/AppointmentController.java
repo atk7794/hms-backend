@@ -1,5 +1,7 @@
 package com.example.hms.controller;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import com.example.hms.dto.request.AppointmentRequestDTO;
 import com.example.hms.dto.response.AppointmentResponseDTO;
 import com.example.hms.dto.response.DoctorResponseDTO;
@@ -15,8 +17,9 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/appointments")
-@CrossOrigin(origins = "http://localhost:4200")
 public class AppointmentController {
+
+    private static final Logger logger = LoggerFactory.getLogger(AppointmentController.class);
 
     @Autowired
     private AppointmentService appointmentService;
@@ -41,8 +44,11 @@ public class AppointmentController {
     public AppointmentResponseDTO createAppointment(@Valid @RequestBody AppointmentRequestDTO appointmentRequestDTO) {
         AppointmentResponseDTO response = appointmentService.createAppointment(appointmentRequestDTO);
 
-        System.out.println("📩 Gelen Patient ID: " + appointmentRequestDTO.getPatientId());
-        System.out.println("📩 Gelen Doctor ID: " + appointmentRequestDTO.getDoctorId());
+        // System.out.println("📩 Gelen Patient ID: " + appointmentRequestDTO.getPatientId());
+        // System.out.println("📩 Gelen Doctor ID: " + appointmentRequestDTO.getDoctorId());
+        logger.info("Request received: Create appointment for PatientID {} & DoctorID {}",
+                appointmentRequestDTO.getPatientId(),
+                appointmentRequestDTO.getDoctorId());
 
         // User Action Log
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
@@ -108,5 +114,4 @@ public class AppointmentController {
     public List<AppointmentResponseDTO> getAppointmentsByDoctor(@PathVariable Long doctorId) {
         return appointmentService.getAppointmentsByDoctorId(doctorId);
     }
-
 }

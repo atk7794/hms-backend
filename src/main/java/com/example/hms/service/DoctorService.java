@@ -14,7 +14,6 @@ public interface DoctorService {
     // ID ile tek bir doktoru getir
     DoctorResponseDTO getDoctorById(Long id);
 
-
     DoctorResponseDTO getDoctorByUserId(Long userId);
 
     // Yeni doktor ekle
@@ -26,7 +25,6 @@ public interface DoctorService {
     // ID ile doktor sil
     void deleteDoctor(Long id);
 
-
     List<String> getAllSpecialities();
 
     List<DoctorResponseDTO> getDoctorsBySpeciality(String speciality);
@@ -34,6 +32,5 @@ public interface DoctorService {
     DoctorResponseDTO convertToDTO(Doctor doctor);
 
     Doctor getDoctorEntityById(Long id);
-
 
 }

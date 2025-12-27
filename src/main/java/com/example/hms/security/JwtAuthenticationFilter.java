@@ -1,5 +1,7 @@
 package com.example.hms.security;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -18,6 +20,8 @@ import java.util.Collections;
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private final JwtUtil jwtUtil;
+
+    private static final Logger logger = LoggerFactory.getLogger(JwtAuthenticationFilter.class);
 
     public JwtAuthenticationFilter(JwtUtil jwtUtil) {
         this.jwtUtil = jwtUtil;
@@ -44,7 +48,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                     role = jwtUtil.getRoleFromToken(token);
                 }
             } catch (Exception ex) {
-                System.out.println("⚠️ Geçersiz JWT: " + ex.getMessage());
+                // System.out.println("⚠️ Geçersiz JWT: " + ex.getMessage());
+                logger.warn("Geçersiz JWT: {}", ex.getMessage());
             }
         }
 

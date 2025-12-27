@@ -25,7 +25,6 @@ public class UserActivityLogServiceImpl implements UserActivityLogService {
         logRepository.save(log);
     }
 
-
     @Override
     public void logLogout(String username) {
         logRepository.findFirstByUsernameAndLogoutAtIsNullOrderByLoginAtDesc(username)
@@ -40,7 +39,6 @@ public class UserActivityLogServiceImpl implements UserActivityLogService {
     public List<UserActivityLog> getAllLogs() {
         return logRepository.findAll();
     }
-
 
     @Override
     public List<UserActivityLog> getOpenSessions(String username) {

@@ -58,8 +58,6 @@ public class MedicalRecordServiceImpl implements MedicalRecordService {
                 .collect(Collectors.toList());
     }
 
-
-
     // ✅ YENİ KAYIT OLUŞTUR
     @Override
     public MedicalRecordResponseDTO createRecord(MedicalRecordRequestDTO dto) {
@@ -94,7 +92,6 @@ public class MedicalRecordServiceImpl implements MedicalRecordService {
         medicalRecordRepository.deleteById(id);
     }
 
-
     // bunu doktor için kullanıcaktık sonra kullanmadık sanırım ???
     @Override
     public MedicalRecordResponseDTO getRecordById(Long id) {
@@ -102,7 +99,6 @@ public class MedicalRecordServiceImpl implements MedicalRecordService {
                 .orElseThrow(() -> new ResourceNotFoundException("MedicalRecord not found with id: " + id));
         return toDTO(record);
     }
-
 
     // ✅ ENTITY -> DTO DÖNÜŞÜMÜ
     private MedicalRecordResponseDTO toDTO(MedicalRecord record) {

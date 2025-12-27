@@ -13,6 +13,7 @@ public class PrescriptionRequestDTO implements Serializable {
     private Long doctorId;
 
     // 🔹 Yeni alan: e-prescription kodu
+    @NotBlank(message = "prescriptionCode cannot be blank")
     private String prescriptionCode;
 
     // opsiyonel: medical record ile ilişkilendirme

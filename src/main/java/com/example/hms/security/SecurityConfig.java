@@ -1,5 +1,6 @@
 package com.example.hms.security;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -13,81 +14,91 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+
+import java.util.List;
 
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
 
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
-    private final CustomLoginSuccessHandler customLoginSuccessHandler;
-    private final CustomLogoutSuccessHandler customLogoutSuccessHandler;
 
-    public SecurityConfig(
-            JwtAuthenticationFilter jwtAuthenticationFilter,
-            CustomLoginSuccessHandler customLoginSuccessHandler,
-            CustomLogoutSuccessHandler customLogoutSuccessHandler
-    ) {
+    public SecurityConfig(JwtAuthenticationFilter jwtAuthenticationFilter) {
         this.jwtAuthenticationFilter = jwtAuthenticationFilter;
-        this.customLoginSuccessHandler = customLoginSuccessHandler;
-        this.customLogoutSuccessHandler = customLogoutSuccessHandler;
     }
+
+    @Value("${app.cors.allowed-origins}")
+    private String allowedOrigins;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+
         http
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .csrf(AbstractHttpConfigurer::disable)
-                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+
+                // 🔥 JWT → STATELESS
+                .sessionManagement(session ->
+                        session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                )
+
                 .authorizeHttpRequests(auth -> auth
-                        // 🔓 Auth Controller serbest
+                        .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+                        // 🔓 Auth endpoints serbest
                         .requestMatchers("/api/auth/**").permitAll()
 
-                        .requestMatchers(HttpMethod.POST, "/api/appointments/**").hasAnyRole("PATIENT", "DOCTOR", "ADMIN")
-                        .requestMatchers(HttpMethod.PUT, "/api/appointments/**").hasAnyRole("PATIENT", "DOCTOR", "ADMIN")
-                        .requestMatchers(HttpMethod.DELETE, "/api/appointments/**").hasAnyRole("PATIENT", "DOCTOR", "ADMIN")
+                        // 📅 Appointments
+                        .requestMatchers(HttpMethod.POST, "/api/appointments/**")
+                        .hasAnyRole("PATIENT", "DOCTOR", "ADMIN")
+                        .requestMatchers(HttpMethod.PUT, "/api/appointments/**")
+                        .hasAnyRole("PATIENT", "DOCTOR", "ADMIN")
+                        .requestMatchers(HttpMethod.DELETE, "/api/appointments/**")
+                        .hasAnyRole("PATIENT", "DOCTOR", "ADMIN")
 
-                        .requestMatchers(HttpMethod.POST, "/api/prescriptions/**").hasAnyRole("DOCTOR", "ADMIN")
-                        .requestMatchers(HttpMethod.PUT, "/api/prescriptions/**").hasAnyRole("DOCTOR", "ADMIN")
-                        .requestMatchers(HttpMethod.DELETE, "/api/prescriptions/**").hasAnyRole("DOCTOR", "ADMIN")
-                        .requestMatchers(HttpMethod.GET, "/api/prescriptions/**").hasAnyRole("DOCTOR", "PATIENT", "ADMIN")
+                        // 💊 Prescriptions
+                        .requestMatchers(HttpMethod.POST, "/api/prescriptions/**")
+                        .hasAnyRole("DOCTOR", "ADMIN")
+                        .requestMatchers(HttpMethod.PUT, "/api/prescriptions/**")
+                        .hasAnyRole("DOCTOR", "ADMIN")
+                        .requestMatchers(HttpMethod.DELETE, "/api/prescriptions/**")
+                        .hasAnyRole("DOCTOR", "ADMIN")
+                        .requestMatchers(HttpMethod.GET, "/api/prescriptions/**")
+                        .hasAnyRole("DOCTOR", "PATIENT", "ADMIN")
 
-                        // 🔒 Geri kalan her şey kimlik doğrulaması gerektirir
+                        // 🔒 Geri kalan her şey JWT ister
                         .anyRequest().authenticated()
                 )
 
-                // JWT filtresinden önce
-                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
-
-                // Login/logout event handler
-                .formLogin(form -> form
-                        .loginPage("/login")
-                        .successHandler(customLoginSuccessHandler)
-                )
-                .logout(logout -> logout
-                        .logoutUrl("/logout")
-                        .logoutSuccessHandler(customLogoutSuccessHandler)
-                );
+                // 🔐 JWT Filter
+                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }
 
-    // ✅ CORS yapılandırması
+    // 🌍 CORS (şimdilik localhost, sonra ENV)
     @Bean
-    public org.springframework.web.cors.CorsConfigurationSource corsConfigurationSource() {
-        org.springframework.web.cors.CorsConfiguration configuration = new org.springframework.web.cors.CorsConfiguration();
-        configuration.setAllowedOrigins(java.util.List.of("http://localhost:4200"));
-        configuration.setAllowedMethods(java.util.List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
-        configuration.setAllowedHeaders(java.util.List.of("Authorization", "Content-Type", "X-Requested-With", "Accept", "Origin"));
-        configuration.setAllowCredentials(true);
-        configuration.setMaxAge(3600L);
+    public CorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration config = new CorsConfiguration();
 
-        org.springframework.web.cors.UrlBasedCorsConfigurationSource source = new org.springframework.web.cors.UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/**", configuration);
+        // 🔥 improvement burada
+        config.setAllowedOriginPatterns(List.of(allowedOrigins.split(",")));
+
+        config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+        config.setAllowedHeaders(List.of("Authorization", "Content-Type"));
+        config.setAllowCredentials(true);
+        config.setMaxAge(3600L);
+
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", config);
         return source;
     }
 
     @Bean
-    public AuthenticationManager authenticationManager(AuthenticationConfiguration configuration) throws Exception {
+    public AuthenticationManager authenticationManager(
+            AuthenticationConfiguration configuration) throws Exception {
         return configuration.getAuthenticationManager();
     }
 

@@ -1,11 +1,15 @@
 package com.example.hms.dto.response;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 import java.time.LocalDateTime;
 
 public class AppointmentResponseDTO {
     private Long id;
     private PatientResponseDTO patient;
     private DoctorResponseDTO doctor;
+
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
     private LocalDateTime appointmentDate;
     private String status;
 

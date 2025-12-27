@@ -1,5 +1,6 @@
 package com.example.hms.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 //import lombok.Data;
 
@@ -17,15 +18,13 @@ public class Doctor {
 
     private String specialty; // uzmanlık alanı
 
-
-    @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.MERGE)
+    @OneToOne(fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinColumn(name = "user_id", referencedColumnName = "id", nullable = false)
     private User user;
 
     @OneToMany(mappedBy = "doctor", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore
     private java.util.List<Appointment> appointments = new java.util.ArrayList<>();
-
-
 
     // Constructors
     public Doctor() {}

@@ -1,5 +1,7 @@
 package com.example.hms.service.impl;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import com.example.hms.model.Appointment;
 import com.example.hms.repository.AppointmentRepository;
 import com.example.hms.service.EmailService;
@@ -18,6 +20,8 @@ public class ReminderService {
     private final AppointmentRepository appointmentRepository;
     private final EmailService emailService;
 
+    private static final Logger logger = LoggerFactory.getLogger(ReminderService.class);
+
     public ReminderService(AppointmentRepository appointmentRepository, EmailService emailService) {
         this.appointmentRepository = appointmentRepository;
         this.emailService = emailService;
@@ -33,7 +37,8 @@ public class ReminderService {
         List<Appointment> appointments = appointmentRepository.findAppointmentsWithinRangeWithRelations(start, end);
 
         if (appointments.isEmpty()) {
-            System.out.println("ℹ️ Yarın için randevu bulunamadı.");
+            // System.out.println("ℹ️ Yarın için randevu bulunamadı.");
+            logger.info("No patient appointments found for tomorrow.");
             return;
         }
 
@@ -59,16 +64,23 @@ public class ReminderService {
                 );
 
                 emailService.sendEmail(email, subject, message);
-                System.out.println("✅ Hatırlatma maili gönderildi -> " + email);
+                // System.out.println("✅ Hatırlatma maili gönderildi -> " + email);
+                logger.info("Patient reminder email sent -> {}", email);
 
             } catch (Exception e) {
-                System.err.println("⚠️ Hatırlatma maili gönderilemedi: " + e.getMessage());
+                // System.err.println("⚠️ Hatırlatma maili gönderilemedi: " + e.getMessage());
+                logger.warn(
+                        "Failed to send patient reminder email | appointmentId={} reason={}",
+                        appointment.getId(),
+                        e.getMessage()
+                );
+                logger.error("Reminder email error", e);
             }
         }
     }
 
     // 🔹 Doktorlara ertesi günkü randevuların özetini gönder
-    @Scheduled(cron = "0 0 8 * * *", zone = "Europe/Istanbul")
+    @Scheduled(cron = "0 5 8 * * *", zone = "Europe/Istanbul")
     public void sendDoctorReminders() {
         LocalDate tomorrow = LocalDate.now().plusDays(1);
         LocalDateTime start = tomorrow.atStartOfDay();
@@ -77,7 +89,8 @@ public class ReminderService {
         List<Appointment> appointments = appointmentRepository.findAppointmentsWithinRangeWithRelations(start, end);
 
         if (appointments.isEmpty()) {
-            System.out.println("ℹ️ Doktorlar için yarın randevu bulunamadı.");
+            // System.out.println("ℹ️ Doktorlar için yarın randevu bulunamadı.");
+            logger.info("No doctor appointments found for tomorrow.");
             return;
         }
 
@@ -112,9 +125,16 @@ public class ReminderService {
 
             try {
                 emailService.sendEmail(email, subject, message.toString());
-                System.out.println("✅ Doktora hatırlatma maili gönderildi -> " + email);
+                // System.out.println("✅ Doktora hatırlatma maili gönderildi -> " + email);
+                logger.info("Doctor reminder email sent -> {}", email);
             } catch (Exception e) {
-                System.err.println("⚠️ Doktora mail gönderilemedi: " + e.getMessage());
+                // System.err.println("⚠️ Doktora mail gönderilemedi: " + e.getMessage());
+                logger.warn(
+                        "Failed to send doctor reminder email | doctorId={} reason={}",
+                        doctor.getId(),
+                        e.getMessage()
+                );
+                logger.error("Doctor reminder email error", e);
             }
         }
     }

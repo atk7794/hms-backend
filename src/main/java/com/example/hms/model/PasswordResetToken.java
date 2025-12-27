@@ -1,5 +1,6 @@
 package com.example.hms.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
@@ -22,6 +23,7 @@ public class PasswordResetToken {
     // 🔹 İlişki: Hangi kullanıcı için
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
+    @JsonIgnore
     private User user;  // Senin model/ içindeki User entity
 
     public PasswordResetToken() {}

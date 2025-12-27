@@ -15,7 +15,6 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/patients")
-@CrossOrigin(origins = "http://localhost:4200")
 public class PatientController {
 
     @Autowired
@@ -27,13 +26,11 @@ public class PatientController {
     @Autowired
     private UserActionLogService userActionLogService;
 
-
     // Tüm hastaları listele
     @GetMapping
     public List<PatientResponseDTO> getAllPatients() {
         return patientService.getAllPatients();
     }
-
 
     // Yeni hasta ekle
     @PostMapping
@@ -49,7 +46,6 @@ public class PatientController {
         return response;
     }
 
-
     // ID ile hasta sil
     @DeleteMapping("/{id}")
     public void deletePatient(@PathVariable Long id) {
@@ -64,7 +60,6 @@ public class PatientController {
         patientService.deletePatient(id); // sonra sil
     }
 
-
     // ID ile hasta güncelle
     @PutMapping("/{id}")
     public PatientResponseDTO updatePatient(@PathVariable Long id, @RequestBody PatientRequestDTO patientDTO) {
@@ -78,7 +73,6 @@ public class PatientController {
 
         return response;
     }
-
 
     // ID ile tek bir hasta getir
     @GetMapping("/{id}")
@@ -99,6 +93,4 @@ public class PatientController {
         dto.setBirthDate(patient.getBirthDate());
         return dto;
     }
-
-
 }

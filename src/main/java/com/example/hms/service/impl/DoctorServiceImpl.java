@@ -1,5 +1,6 @@
 package com.example.hms.service.impl;
 
+import org.springframework.beans.factory.annotation.Value;
 import com.example.hms.dto.request.DoctorRequestDTO;
 import com.example.hms.dto.response.DoctorResponseDTO;
 import com.example.hms.exception.ResourceNotFoundException;
@@ -31,6 +32,9 @@ public class DoctorServiceImpl implements DoctorService {
 
     @Autowired
     private EmailService emailService;
+
+    @Value("${app.frontend.url}")
+    private String frontendUrl;
 
     // Tüm doktorları getir
     @Override
@@ -77,7 +81,7 @@ public class DoctorServiceImpl implements DoctorService {
 
         // 4️⃣ 🔹 Email doğrulama token ve mail gönder
         String token = emailVerificationService.createVerificationToken(savedUser);
-        String link = "http://localhost:4200/verify-email?token=" + token;
+        String link = frontendUrl + "/verify-email?token=" + token;
 
         String htmlContent = "<!DOCTYPE html>"
                 + "<html><body>"

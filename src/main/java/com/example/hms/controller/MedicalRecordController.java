@@ -11,7 +11,6 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/medical-records")
-@CrossOrigin(origins = "http://localhost:4200")
 public class MedicalRecordController {
 
     private final MedicalRecordService medicalRecordService;
@@ -58,7 +57,4 @@ public class MedicalRecordController {
     public ResponseEntity<List<MedicalRecordResponseDTO>> getRecordsByDoctor(@PathVariable Long doctorId) {
         return ResponseEntity.ok(medicalRecordService.getRecordsByDoctorId(doctorId));
     }
-
-
-
 }

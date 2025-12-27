@@ -1,5 +1,6 @@
 package com.example.hms.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
 @Entity
@@ -14,6 +15,7 @@ public class User {
     private String email;
 
     @Column(nullable = false)
+    @JsonIgnore
     private String password;
 
     @Column(nullable = false)
@@ -27,7 +29,6 @@ public class User {
 
     @Column(nullable = false)
     private boolean emailVerified = false;
-
 
     public User() {}
 

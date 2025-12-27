@@ -19,13 +19,12 @@ public interface AppointmentRepository extends JpaRepository<Appointment, Long> 
     // Eğer istersen status ile filtreleme için ek metodlar
     List<Appointment> findByPatientIdAndStatus(Long patientId, String status);
 
-    List<Appointment> findByDoctorIdAndStatus(Long patientId, String status);
+    List<Appointment> findByDoctorIdAndStatus(Long doctorId, String status);
 
     @Query("SELECT a FROM Appointment a " +
             "JOIN FETCH a.patient p " +
             "JOIN FETCH a.doctor d " +
             "WHERE a.appointmentDate BETWEEN :start AND :end")
     List<Appointment> findAppointmentsWithinRangeWithRelations(LocalDateTime start, LocalDateTime end);
-
 
 }

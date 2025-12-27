@@ -1,10 +1,19 @@
 package com.example.hms.dto.request;
 
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+
 import java.io.Serializable;
 
 public class MedicalRecordRequestDTO implements Serializable {
+
+    @NotNull(message = "patientId is required")
     private Long patientId;
+
+    @NotNull(message = "doctorId is required")
     private Long doctorId;
+
+    @NotBlank(message = "Diagnosis is required")
     private String diagnosis;
     private String prescription;
     private String notes;

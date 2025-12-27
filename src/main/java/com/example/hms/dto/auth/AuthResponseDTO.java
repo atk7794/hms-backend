@@ -1,5 +1,8 @@
 package com.example.hms.dto.auth;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class AuthResponseDTO {
     private Long id;
     private String email;

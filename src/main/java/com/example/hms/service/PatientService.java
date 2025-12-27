@@ -27,5 +27,4 @@ public interface PatientService {
 
     Patient getPatientEntityById(Long id);
 
-
 }

@@ -1,6 +1,8 @@
 package com.example.hms.dto.request;
 
+import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 
 public class DoctorRequestDTO {
 
@@ -16,9 +18,11 @@ public class DoctorRequestDTO {
     private Long userId;
 
     @NotBlank(message = "Email is mandatory")
+    @Email(message = "Invalid email format")
     private String email; // User tablosu için
 
     @NotBlank(message = "Password is mandatory")
+    @Size(min = 6, message = "Password must be at least 6 characters")
     private String password; // User tablosu için
 
     public DoctorRequestDTO() {}

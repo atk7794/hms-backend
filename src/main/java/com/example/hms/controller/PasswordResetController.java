@@ -1,5 +1,6 @@
 package com.example.hms.controller;
 
+import org.springframework.beans.factory.annotation.Value;
 import com.example.hms.model.User;
 import com.example.hms.repository.UserRepository;
 import com.example.hms.service.PasswordResetService;
@@ -26,6 +27,9 @@ public class PasswordResetController {
         this.emailService = emailService;
     }
 
+    @Value("${app.frontend.url}")
+    private String frontendUrl;
+
     @PostMapping("/forgot-password")
     public ResponseEntity<?> forgotPassword(@RequestBody Map<String, String> payload) {
         String email = payload.get("email");
@@ -37,7 +41,7 @@ public class PasswordResetController {
 
         User user = userOpt.get();
         String token = passwordResetService.createPasswordResetToken(user);
-        String resetLink = "http://localhost:4200/reset-password?token=" + token;
+        String resetLink = frontendUrl + "/reset-password?token=" + token;
 
         // 🔹 İsim bulma (role’e göre)
         String name = "Kullanıcı";

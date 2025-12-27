@@ -1,6 +1,7 @@
 package com.example.hms.model;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
@@ -15,14 +16,16 @@ public class Appointment {
     // Bir randevu bir hasta ile ilişkilidir
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "patient_id", nullable = false)
+    @JsonIgnoreProperties({"appointments", "user"})
     private Patient patient;
 
     // Bir randevu bir doktor ile ilişkilidir
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "doctor_id", nullable = false)
+    @JsonIgnoreProperties({"appointments", "user"})
     private Doctor doctor;
 
-    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss", timezone = "Europe/Istanbul")
     private LocalDateTime appointmentDate; // randevu tarihi ve saati
 
     private String status; // örn: SCHEDULED, COMPLETED, CANCELLED

@@ -1,5 +1,6 @@
 package com.example.hms.controller;
 
+import org.springframework.beans.factory.annotation.Value;
 import com.example.hms.dto.auth.AuthResponseDTO;
 import com.example.hms.dto.auth.LoginRequestDTO;
 import com.example.hms.dto.auth.RegisterRequestDTO;
@@ -24,10 +25,8 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 
-
 @RestController
 @RequestMapping("/api/auth")
-@CrossOrigin(origins = "http://localhost:4200")
 public class AuthController {
 
     @Autowired
@@ -48,6 +47,9 @@ public class AuthController {
 
     @Autowired
     private UserActivityLogService userActivityLogService;
+
+    @Value("${app.frontend.url}")
+    private String frontendUrl;
 
     @PostMapping("/register")
     public AuthResponseDTO register(@RequestBody RegisterRequestDTO dto) throws Exception {
@@ -83,7 +85,7 @@ public class AuthController {
 
         // 🔹 Email verification token oluştur
         String verificationToken = emailVerificationService.createVerificationToken(savedUser);
-        String verificationLink = "http://localhost:4200/verify-email?token=" + verificationToken;
+        String verificationLink = frontendUrl + "/verify-email?token=" + verificationToken;
 
         // 🔹 HTML mail içeriği
         String htmlContent = "<!DOCTYPE html>"
@@ -116,7 +118,6 @@ public class AuthController {
         );
     }
 
-
     @PostMapping("/verify-email")
     public ResponseEntity<?> verifyEmail(@RequestBody Map<String, String> request) {
         String token = request.get("token");
@@ -148,7 +149,7 @@ public class AuthController {
         String token = emailVerificationService.createVerificationToken(user);
 
         // 4️⃣ Doğrulama linki oluştur
-        String link = "http://localhost:4200/verify-email?token=" + token;
+        String link = frontendUrl + "/verify-email?token=" + token;
 
         // 5️⃣ HTML mail içeriği hazırla
         String html = "<!DOCTYPE html>"
@@ -169,8 +170,6 @@ public class AuthController {
         // 7️⃣ Yanıt dön
         return ResponseEntity.ok("Doğrulama e-postası tekrar gönderildi. Lütfen e-postanızı kontrol edin.");
     }
-
-
 
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody LoginRequestDTO loginDTO) {
@@ -227,7 +226,15 @@ public class AuthController {
         }
     }
 
-    // 🔹 LOGOUT (Yeni eklendi) GHGH
+    // 🔹 LOGOUT (Yeni eklendi)
+    // ⚠️ NOTE:
+    // JWT stateless olduğu için bu logout sadece LOG tutar.
+    // Token backend tarafında invalidate edilmez.
+    // Gerçek logout için:
+    // - Token blacklist
+    // - Refresh token
+    // - Token versioning
+    // gibi mekanizmalar gerekir.
     @PostMapping("/logout")
     public ResponseEntity<?> logout(HttpServletRequest request) {
         try {
@@ -244,5 +251,4 @@ public class AuthController {
             return ResponseEntity.status(400).body(Map.of("message", "Logout failed: " + e.getMessage()));
         }
     }
-
 }

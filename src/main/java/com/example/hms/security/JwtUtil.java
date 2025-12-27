@@ -1,5 +1,7 @@
 package com.example.hms.security;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;
@@ -16,6 +18,8 @@ public class JwtUtil {
 
     @Value("${jwt.expiration}")
     private long jwtExpirationMs;
+
+    private static final Logger logger = LoggerFactory.getLogger(JwtUtil.class);
 
     private byte[] getSigningKeyBytes() {
         return jwtSecret.getBytes(StandardCharsets.UTF_8);
@@ -62,7 +66,8 @@ public class JwtUtil {
             return true;
         } catch (JwtException | IllegalArgumentException e) {
             // log ekleyebilirsin
-            System.out.println("Invalid JWT: " + e.getMessage());
+            // System.out.println("Invalid JWT: " + e.getMessage());
+            logger.warn("Invalid JWT: {}", e.getMessage());
             return false;
         }
     }

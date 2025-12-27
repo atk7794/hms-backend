@@ -74,8 +74,6 @@ public class PatientServiceImpl implements PatientService {
         return convertToDTO(saved);
     }
 
-
-
     // ID ile hasta güncelle
     @Override
     public PatientResponseDTO updatePatient(Long id, PatientRequestDTO dto) {
@@ -118,7 +116,6 @@ public class PatientServiceImpl implements PatientService {
         patientRepository.delete(patient);
     }
 
-
     public void updatePatientByUserId(PatientRequestDTO dto) {
         Optional<Patient> existing = patientRepository.findByUserId(dto.getUserId());
         if (existing.isPresent()) {
@@ -143,8 +140,6 @@ public class PatientServiceImpl implements PatientService {
                 .orElseThrow(() -> new ResourceNotFoundException("Patient not found with ID: " + id));
     }
 
-
-
     // Entity -> ResponseDTO
     public PatientResponseDTO convertToDTO(Patient patient) {
         PatientResponseDTO dto = new PatientResponseDTO();
@@ -161,7 +156,6 @@ public class PatientServiceImpl implements PatientService {
 
         return dto;
     }
-
 
     // RequestDTO -> Entity
     private Patient convertToEntity(PatientRequestDTO dto) {

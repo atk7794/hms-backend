@@ -7,9 +7,10 @@ import com.example.hms.repository.UserRepository;
 import com.example.hms.service.AuthService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCrypt;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-        import java.util.Optional;
+import java.util.Optional;
 
 @Service
 public class AuthServiceImpl implements AuthService {
@@ -20,6 +21,8 @@ public class AuthServiceImpl implements AuthService {
     @Autowired
     private PatientRepository patientRepository;
 
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     @Override
     public User register(User user) throws Exception {
@@ -29,8 +32,11 @@ public class AuthServiceImpl implements AuthService {
         }
 
         // ✅ Şifreyi hashle
-        String hashedPassword = BCrypt.hashpw(user.getPassword(), BCrypt.gensalt());
-        user.setPassword(hashedPassword);
+        // String hashedPassword = BCrypt.hashpw(user.getPassword(), BCrypt.gensalt());
+        // user.setPassword(hashedPassword);
+
+        // ✅ TEK VE STANDART ŞİFRELEME
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
 
         // User kaydet
         User savedUser = userRepository.save(user);
@@ -55,7 +61,12 @@ public class AuthServiceImpl implements AuthService {
         User user = userOpt.get();
 
         // ✅ Hash karşılaştırması
-        if (!BCrypt.checkpw(password, user.getPassword())) {
+        // if (!BCrypt.checkpw(password, user.getPassword())) {
+        //    throw new Exception("Şifre yanlış.");
+        // }
+
+        // ✅ STANDART KARŞILAŞTIRMA
+        if (!passwordEncoder.matches(password, user.getPassword())) {
             throw new Exception("Şifre yanlış.");
         }
 
@@ -68,9 +79,3 @@ public class AuthServiceImpl implements AuthService {
     }
 
 }
-
-
-
-
-
-

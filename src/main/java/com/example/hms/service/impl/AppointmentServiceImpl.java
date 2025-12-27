@@ -1,5 +1,7 @@
 package com.example.hms.service.impl;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import com.example.hms.dto.request.AppointmentRequestDTO;
 import com.example.hms.dto.response.AppointmentResponseDTO;
 import com.example.hms.dto.response.PatientResponseDTO;
@@ -34,6 +36,7 @@ public class AppointmentServiceImpl implements AppointmentService {
     @Autowired
     private EmailService emailService;
 
+    private static final Logger logger = LoggerFactory.getLogger(AppointmentServiceImpl.class);
 
     @Override
     public List<AppointmentResponseDTO> getAllAppointments() {
@@ -103,7 +106,12 @@ public class AppointmentServiceImpl implements AppointmentService {
             emailService.sendEmail(doctorEmail, subjectDoctor, messageDoctor);
 
         } catch (Exception e) {
-            System.err.println("⚠️ Randevu maili gönderilemedi: " + e.getMessage());
+            // System.err.println("⚠️ Randevu maili gönderilemedi: " + e.getMessage());
+            logger.warn(
+                    "Appointment created BUT email failed | appointmentId={} reason={}",
+                    saved.getId(),
+                    e.getMessage()
+            );
         }
 
         return convertToResponseDTO(saved);
@@ -161,7 +169,12 @@ public class AppointmentServiceImpl implements AppointmentService {
             emailService.sendEmail(doctorEmail, subjectDoctor, messageDoctor);
 
         } catch (Exception e) {
-            System.err.println("⚠️ Güncelleme maili gönderilemedi: " + e.getMessage());
+            // System.err.println("⚠️ Güncelleme maili gönderilemedi: " + e.getMessage());
+            logger.warn(
+                    "Appointment updated BUT email failed | appointmentId={} reason={}",
+                    updated.getId(),
+                    e.getMessage()
+            );
         }
 
         return convertToResponseDTO(updated);
@@ -206,10 +219,16 @@ public class AppointmentServiceImpl implements AppointmentService {
             emailService.sendEmail(doctorEmail, subjectDoctor, messageDoctor);
 
         } catch (Exception e) {
-            System.err.println("⚠️ İptal maili gönderilemedi: " + e.getMessage());
+            // System.err.println("⚠️ İptal maili gönderilemedi: " + e.getMessage());
+            logger.warn(
+                    "Appointment deleted BUT email failed | appointmentId={} reason={}",
+                    id,
+                    e.getMessage()
+            );
         }
 
         appointmentRepository.delete(appointment);
+
     }
 
     @Override

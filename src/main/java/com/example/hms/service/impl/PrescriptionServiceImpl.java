@@ -1,5 +1,7 @@
 package com.example.hms.service.impl;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import com.example.hms.dto.request.PrescriptionRequestDTO;
 import com.example.hms.dto.response.PrescriptionResponseDTO;
 import com.example.hms.exception.ResourceNotFoundException;
@@ -30,6 +32,8 @@ public class PrescriptionServiceImpl implements PrescriptionService {
     private final EmailService emailService;
     private final UserActionLogService userActionLogService;
 
+    private static final Logger logger = LoggerFactory.getLogger(PrescriptionServiceImpl.class);
+
     public PrescriptionServiceImpl(PrescriptionRepository prescriptionRepository,
                                    PatientService patientService,
                                    DoctorService doctorService,
@@ -44,7 +48,6 @@ public class PrescriptionServiceImpl implements PrescriptionService {
         this.userActionLogService = userActionLogService;
     }
 
-
     // Service impl
     @Override
     public List<PrescriptionResponseDTO> getAllPrescriptions() {
@@ -53,7 +56,6 @@ public class PrescriptionServiceImpl implements PrescriptionService {
                 .map(this::toResponseDTO)
                 .collect(Collectors.toList());
     }
-
 
     @Override
     public PrescriptionResponseDTO getPrescriptionById(Long id) {
@@ -178,7 +180,9 @@ public class PrescriptionServiceImpl implements PrescriptionService {
                 emailService.sendEmail(patient.getUser().getEmail(), subject, body.toString());
             }
         } catch (Exception e) {
-            System.err.println("⚠️ Prescription delete email failed: " + e.getMessage());
+            // System.err.println("⚠️ Prescription delete email failed: " + e.getMessage());
+            logger.warn("Prescription delete email failed | id={} reason={}", id, e.getMessage());
+            logger.error("Prescription delete email error", e);
         }
 
         // ✅ UserActionLog
@@ -188,7 +192,6 @@ public class PrescriptionServiceImpl implements PrescriptionService {
             userActionLogService.logAction(doctor.getUser().getEmail(), "DELETE_PRESCRIPTION", logDesc);
         }
     }
-
 
     @Override
     public List<PrescriptionResponseDTO> getPrescriptionsByPatientId(Long patientId) {
@@ -234,32 +237,12 @@ public class PrescriptionServiceImpl implements PrescriptionService {
                 emailService.sendEmail(patient.getUser().getEmail(), subject, body.toString());
             }
         } catch (Exception e) {
-            System.err.println("⚠️ Prescription email notification failed: " + e.getMessage());
+            // System.err.println("⚠️ Prescription email notification failed: " + e.getMessage());
+            logger.warn("Prescription email send failed | code={} reason={}",
+                    saved.getPrescriptionCode(), e.getMessage());
+            logger.error("Prescription email sending error", e);
         }
     }
-
-
-//    // 📨 ESKİ : Ortak e-posta metodu
-//    private void sendPrescriptionEmail(Patient patient, Doctor doctor, PrescriptionRequestDTO dto, boolean isNew) {
-//        try {
-//            String subject = isNew ? "Yeni Reçeteniz Oluşturuldu" : "Reçeteniz Güncellendi";
-//            String body = "Sayın " + patient.getFirstName() + " " + patient.getLastName() + ",\n\n"
-//                    + "Doktorunuz Dr. " + doctor.getFirstName() + " " + doctor.getLastName()
-//                    + (isNew ? " tarafından yeni bir reçete oluşturulmuştur." : " tarafından reçeteniz güncellenmiştir.") + "\n\n"
-//                    + "İlaç: " + dto.getMedication() + "\n"
-//                    + "Dozaj: " + dto.getDosage() + "\n"
-//                    + "Açıklamalar: " + dto.getInstructions() + "\n\n"
-//                    + "Sisteme giriş yaparak detaylı reçete bilgilerini görüntüleyebilirsiniz.\n\n"
-//                    + "Sağlıklı günler dileriz,\nHospital Management System";
-//
-//            if (patient.getUser() != null && patient.getUser().getEmail() != null) {
-//                emailService.sendEmail(patient.getUser().getEmail(), subject, body);
-//            }
-//        } catch (Exception e) {
-//            System.err.println("⚠️ Prescription email notification failed: " + e.getMessage());
-//        }
-//    }
-
 
     // Helper: entity -> dto
     private PrescriptionResponseDTO toResponseDTO(Prescription p) {

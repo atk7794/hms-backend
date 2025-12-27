@@ -9,7 +9,6 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/user-actions")
-@CrossOrigin(origins = "http://localhost:4200")
 public class UserActionLogController {
 
     private final UserActionLogService userActionLogService;
@@ -46,5 +45,4 @@ public class UserActionLogController {
         LocalDateTime endDate = LocalDateTime.parse(end);
         return userActionLogService.getLogsBetween(startDate, endDate);
     }
-
 }

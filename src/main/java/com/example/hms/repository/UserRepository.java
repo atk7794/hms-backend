@@ -11,8 +11,7 @@ import java.util.Optional;
 public interface UserRepository extends JpaRepository<User, Long> {
 
     // İleride user ile patient birlikte çekmek istersen, @EntityGraph ile fetch yapabilirsin:
-    @EntityGraph(attributePaths = "patient")
+    @EntityGraph(attributePaths = {"patient", "doctor"})
     Optional<User> findByEmail(String email);
-
 
 }

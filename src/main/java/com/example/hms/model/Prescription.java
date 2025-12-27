@@ -1,5 +1,6 @@
 package com.example.hms.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
@@ -14,11 +15,13 @@ public class Prescription {
     // Hangi hasta için reçete
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "patient_id", nullable = false)
+    @JsonIgnoreProperties({"appointments", "user"})
     private Patient patient;
 
     // Reçeteyi yazan doktor
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "doctor_id", nullable = false)
+    @JsonIgnoreProperties({"appointments", "user"})
     private Doctor doctor;
 
     @Column(unique = true, nullable = false)

@@ -14,7 +14,6 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/prescriptions")
-@CrossOrigin(origins = "http://localhost:4200")
 public class PrescriptionController {
 
     private final PrescriptionService prescriptionService;
@@ -103,5 +102,4 @@ public class PrescriptionController {
     public ResponseEntity<List<PrescriptionResponseDTO>> getAllPrescriptions() {
         return ResponseEntity.ok(prescriptionService.getAllPrescriptions());
     }
-
 }

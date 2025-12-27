@@ -15,7 +15,6 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/doctors")
-@CrossOrigin(origins = "http://localhost:4200")
 public class DoctorController {
 
     @Autowired
@@ -53,7 +52,6 @@ public class DoctorController {
         return response;
     }
 
-
     // ID ile doktor güncelle
     @PutMapping("/{id}")
     public DoctorResponseDTO updateDoctor(@PathVariable Long id, @RequestBody DoctorRequestDTO doctorRequestDTO) {
@@ -82,7 +80,6 @@ public class DoctorController {
         doctorService.deleteDoctor(id); // sonra sil
     }
 
-
     // Tüm specialty’leri getir
     @GetMapping("/specialities")
     public List<String> getAllSpecialities() {
@@ -94,7 +91,6 @@ public class DoctorController {
     public List<DoctorResponseDTO> getDoctorsBySpeciality(@RequestParam String speciality) {
         return doctorService.getDoctorsBySpeciality(speciality);
     }
-
 
     @GetMapping("/user/{userId}")
     public DoctorResponseDTO getDoctorByUserId(@PathVariable Long userId) {
@@ -108,6 +104,4 @@ public class DoctorController {
         dto.setSpecialty(doctor.getSpecialty());
         return dto;
     }
-
-
 }
