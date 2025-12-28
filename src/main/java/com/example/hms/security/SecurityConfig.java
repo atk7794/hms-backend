@@ -47,6 +47,10 @@ public class SecurityConfig {
 
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+
+                        // ✅ Render health check
+                        .requestMatchers("/actuator/health", "/actuator/info").permitAll()
+
                         // 🔓 Auth endpoints serbest
                         .requestMatchers("/api/auth/**").permitAll()
 
