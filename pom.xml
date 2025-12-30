@@ -75,13 +75,13 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-actuator</artifactId>
 		</dependency>
-
 		<!--        <dependency>-->
-<!--            <groupId>org.jetbrains</groupId>-->
-<!--            <artifactId>annotations</artifactId>-->
-<!--            <version>RELEASE</version>-->
-<!--            <scope>compile</scope>-->
-<!--        </dependency>-->
+		<!--            <groupId>org.jetbrains</groupId>-->
+		<!--            <artifactId>annotations</artifactId>-->
+		<!--            <version>RELEASE</version>-->
+		<!--            <scope>compile</scope>-->
+		<!--        </dependency>-->
+
 		<!-- Spring Security Web ve Config -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
