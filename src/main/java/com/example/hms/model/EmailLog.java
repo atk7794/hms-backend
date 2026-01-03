@@ -14,6 +14,9 @@ public class EmailLog {
     private String recipient;
     private String subject;
     private boolean success;
+
+    @Lob
+    @Column(columnDefinition = "TEXT")
     private String errorMessage;
     private LocalDateTime sentAt;
 
