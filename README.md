@@ -151,9 +151,40 @@ JWT is returned after successful login.
 
 ✅ Backend development completed  
 ✅ Deployment-ready configuration  
-🚧 Dockerization (next step)  
+✅ Docker-based deployment
+🚧 Production domain & email provider integration
 🚧 Cloud deployment (Render / Railway)  
 🚧 Frontend integration  
+
+---
+
+## 🌐 Live Deployment
+
+Backend API is deployed on Render:
+
+👉 https://hms-backend-0ilj.onrender.com
+
+---
+
+## 🔑 Demo Admin Account
+
+Email: admin@hms.com  
+Password: Admin123!
+
+---
+
+## 📧 Email Service Status
+
+The application includes a complete email infrastructure for:
+
+- Email verification
+- Password reset
+- System notifications
+- Email logging
+
+Due to outbound SMTP restrictions on the current free hosting environment, email delivery is temporarily disabled.
+
+The system is fully compatible with modern email providers such as **Resend, Amazon SES, or SendGrid**, and can be activated by updating environment variables.
 
 ---
 
